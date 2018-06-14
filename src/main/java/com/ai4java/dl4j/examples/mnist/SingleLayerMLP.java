@@ -38,8 +38,8 @@ public class SingleLayerMLP {
 		final int numOfOutputs = 10;      // number of output classes ('0'..'9')
 		final int hiddenLayerSize = 1000; // number of nodes in hidden layer
 
-		final int batchSize = 125;//128; // batch size for each epoch
-		final int numEpochs = 15; // number of epochs to perform
+		final int batchSize = 125;        // batch size for each epoch
+		final int numEpochs = 15; 		  // number of epochs to perform
 
 		// prepare the data sets:
 		DataSetIterator trainSet = new MnistDataSetIterator(batchSize, true, rngSeed);
@@ -74,14 +74,14 @@ public class SingleLayerMLP {
 
 		MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 
-			.seed(rngSeed) //include a random seed for reproducibility
+			.seed(rngSeed) //include the random seed for reproducibility
 	
 			// use stochastic gradient descent as an optimization algorithm
 			.updater(new Nesterovs(0.006, 0.9))
 			.l2(1e-4)
 			.list()
 	
-			// input layer:
+			// hidden layer:
 			.layer(0, new DenseLayer.Builder() 
 			.nIn(numOfInputs)
 			.nOut(hiddenLayerSize)
@@ -89,7 +89,7 @@ public class SingleLayerMLP {
 			.weightInit(WeightInit.XAVIER)
 			.build())
 
-			// hidden layer:        
+			// output layer:        
 			.layer(1, new OutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD) 
 			.nIn(hiddenLayerSize)
 			.nOut(numOfOutputs)
@@ -98,7 +98,7 @@ public class SingleLayerMLP {
 			.build())
 
 			.pretrain(false)
-			.backprop(true) //use backpropagation to adjust weights
+			.backprop(true) // use backpropagation to adjust weights
 
 			.build();
 
@@ -126,9 +126,9 @@ public class SingleLayerMLP {
 		int batchCounter = 0;
 		while(testSet.hasNext()){
 			DataSet next = testSet.next();
-			INDArray output = mlp.output(next.getFeatureMatrix()); //get the networks prediction
+			INDArray output = mlp.output(next.getFeatureMatrix()); // get the networks prediction
 			log.info("Evaluating next batch ({})...", batchCounter++);
-			eval.eval(next.getLabels(), output); //check the prediction against the true class
+			eval.eval(next.getLabels(), output); // check the prediction against the true class
 		}
 
 		log.info(eval.stats());
